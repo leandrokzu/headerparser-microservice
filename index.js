@@ -19,18 +19,17 @@ app.get('/', function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
-// your first API endpoint...
+let responseObject = {};
+app.enable('trust proxy');
 app.get('/api/whoami', function (req, res) {
-  const ipAddress = req.header('x-forwarded-for') || req.socket.remoteAddress;
+  responseObject['ipaddress'] = req.ip;
+  responseObject['language'] = req.get('Accept-Language');
+  responseObject['software'] = req.get('User-Agent');
 
-  res.json({
-    ipaddress: ipAddress.split(',')[0],
-    language: req.get('Accept-language'),
-    software: req.get('User-Agent'),
-  });
+  res.json(responseObject);
 });
 
-// listen for requests :)
+// listen for requests :
 var listener = app.listen(process.env.PORT || 3000, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
